@@ -383,6 +383,17 @@ static inline char *read_line(void)
 static inline void dedup_history(void)
 {
 	if (line && *line) {
+		static char *tmp_line, *tmp_ptr;
+		size_t cnt = 0;
+		if ((tmp_line = calloc(1, strlen(line) + 1)) == NULL)
+			ERRGEN("dedup_history() calloc()");
+		tmp_ptr = tmp_line;
+		memcpy(tmp_line, line, strlen(line) + 1);
+		while (++cnt && (tmp_ptr = strpbrk(tmp_ptr, " ")) && (tmp_ptr += strspn(tmp_ptr, " ")));
+		tmp_ptr = history_arg_extract(0, cnt, tmp_line);
+		free(line);
+		line = tmp_ptr;
+
 		/* search forward */
 		ptrdiff_t cur_hist = where_history();
 		while (history_search_prefix(line, 1) != -1) {
