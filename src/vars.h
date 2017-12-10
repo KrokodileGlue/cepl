@@ -8,6 +8,11 @@
 #ifndef VARS_H
 #define VARS_H 1
 
+/* silence linter */
+#ifndef _GNU_SOURCE
+#	define _GNU_SOURCE
+#endif
+
 #include "compile.h"
 #include "parseopts.h"
 #include <linux/memfd.h>
@@ -80,6 +85,39 @@ static inline void gen_vlist(VAR_LIST *restrict vlist, STR_LIST *restrict ilist,
 		if (uniq)
 			append_var(vlist, ilist->list[i], tlist->list[i]);
 	}
+}
+
+static inline size_t get_vlist_sz(VAR_LIST *restrict vlist)
+{
+	size_t total = 0;
+	/* sanity checks */
+	if (!vlist)
+		ERRX("NULL pointer passed to get_vlist_sz()");
+	for (size_t i = 0; i < vlist->cnt; i++) {
+		switch (vlist->list[i].type_spec) {
+		case T_ERR:
+			break;
+		case T_CHR:
+			total++;
+			break;
+		case T_INT: /* fallthrough */
+		case T_UINT:
+			total += sizeof(long long);
+			break;
+		case T_DBL:
+			total += sizeof(long double);
+			break;
+		case T_PTR:
+			total += sizeof(void *);
+			break;
+		case T_OTHER: /* fallthrough */
+		case T_STR: /* fallthrough */
+		default:
+			total += EVAL_LIMIT;
+		}
+	}
+
+	return total;
 }
 
 #endif

@@ -326,6 +326,9 @@ int print_vars(VAR_LIST *restrict vlist, char const *restrict src, char *const c
 	if (!isatty(STDOUT_FILENO) || !isatty(STDERR_FILENO) || !term || !strcmp(term, "") || !strcmp(term, "dumb"))
 		has_color = false;
 
+	void *vars = mmap(NULL, get_vlist_sz(vlist), PROT_READ|PROT_WRITE, MAP_ANONYMOUS|MAP_SHARED, -1, 0);
+	printf("%p %zu\n", vars, get_vlist_sz(vlist));
+
 	int status, mem_fd, null_fd;
 	int pipe_cc[2], pipe_ld[2], pipe_exec[2];
 	char *p_beg = has_color
