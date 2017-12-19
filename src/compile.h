@@ -11,6 +11,7 @@
 #include "defs.h"
 #include "errs.h"
 #include <fcntl.h>
+#include <pthread.h>
 
 /* prototypes */
 int compile(char const *restrict src, char *const cc_args[], char *const exec_args[]);

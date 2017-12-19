@@ -25,10 +25,13 @@ static char *const ld_alt_list[] = {
 };
 
 extern char **environ;
+/* buffering mutex */
+pthread_mutex_t output_mtx;
 
 /* silence linter */
 long syscall(long __sysno, ...);
 int fexecve(int __fd, char *const __argv[], char *const __envp[]);
+void sync(void);
 
 int compile(char const *restrict src, char *const cc_args[], char *const exec_args[])
 {
@@ -109,9 +112,7 @@ int compile(char const *restrict src, char *const cc_args[], char *const exec_ar
 
 	/* child */
 	case 0:
-		/* redirect stderr to /dev/null */
-		if (dup2(null_fd, STDERR_FILENO) == -1)
-			ERR("redirecting stderr");
+		dup2(null_fd, STDERR_FILENO);
 		dup2(pipe_ld[0], STDIN_FILENO);
 		dup2(pipe_exec[1], STDOUT_FILENO);
 		if (ld_list.list)
@@ -156,7 +157,12 @@ int compile(char const *restrict src, char *const cc_args[], char *const exec_ar
 	default:
 		close(pipe_exec[0]);
 		close(null_fd);
+
+		/* fix buffering issues */
+		pthread_mutex_lock(&output_mtx);
 		wait(&status);
+		pthread_mutex_unlock(&output_mtx);
+
 		/* convert 255 to -1 since WEXITSTATUS() only returns the low-order 8 bits */
 		if (WIFEXITED(status) && WEXITSTATUS(status)) {
 			WARNX("executable returned non-zero exit code");

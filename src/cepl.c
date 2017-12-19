@@ -30,6 +30,8 @@ static sigjmp_buf jmp_env;
 /* TODO: change history filename to a non-hardcoded string */
 static char hist_name[] = "./.cepl_history";
 
+/* buffering mutex */
+extern pthread_mutex_t output_mtx;
 /* `-o` flag output file */
 extern FILE *ofile;
 /* output file buffer and cc args */
@@ -63,7 +65,11 @@ static inline char *read_line(char **restrict ln)
 	}
 	/* use an empty prompt if stdin is a pipe */
 	if (isatty(STDIN_FILENO)) {
+		/* fix buffering issues */
+		pthread_mutex_lock(&output_mtx);
+		sync();
 		*ln = readline(">>> ");
+		pthread_mutex_unlock(&output_mtx);
 		return *ln;
 	}
 
@@ -117,8 +123,10 @@ static inline void free_bufs(void)
 /* general signal handling function */
 static inline void sig_handler(int sig)
 {
+	pthread_mutex_unlock(&output_mtx);
 	/* abort current input line */
 	if (sig == SIGINT) {
+		rl_cleanup_after_signal();
 		rl_clear_visible_line();
 		rl_reset_line_state();
 		rl_free_line_state();
@@ -177,6 +185,8 @@ int main(int argc, char *argv[])
 	char const *const home_env = getenv("HOME");
 	/* token buffers */
 	char *lbuf = NULL, *tbuf = NULL;
+
+	pthread_mutex_init(&output_mtx, NULL);
 
 	/* add hist_length of “$HOME/” if home_env is non-NULL */
 	if (home_env && strcmp(home_env, ""))
@@ -557,27 +567,32 @@ int main(int argc, char *argv[])
 			}
 		}
 
+		/* fix buffering issues */
+		pthread_mutex_lock(&output_mtx);
 		/* set to true before compiling */
 		exec_flag = true;
 		/* finalize source */
 		build_final(&prg, &vl, argv);
-		/* fix buffering issues */
 		sync();
+		usleep(5000);
+		pthread_mutex_unlock(&output_mtx);
 		/* print generated source code unless stdin is a pipe */
 		if (isatty(STDIN_FILENO) && !eval_flag)
 			printf("%s:\n==========\n%s\n==========\n", argv[0], prg[0].total);
 		int ret = compile(prg[1].total, cc_argv, argv);
+		pthread_mutex_lock(&output_mtx);
+		sync();
+		usleep(5000);
 		/* print output and exit code if non-zero */
 		if (ret || (isatty(STDIN_FILENO) && !eval_flag))
 			printf("[exit status: %d]\n", ret);
-		/* fix buffering issues */
-		sync();
+		pthread_mutex_unlock(&output_mtx);
+
 		/* exit if executed with `-e` argument */
 		if (eval_flag) {
 			lbuf = NULL;
 			break;
 		}
-
 		/* cleanup old buffer */
 		free(lptr);
 		lptr = NULL;

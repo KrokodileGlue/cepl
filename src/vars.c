@@ -636,8 +636,6 @@ int print_vars(VAR_LIST *restrict vlist, char const *restrict src, char *const c
 		close(pipe_exec[0]);
 		close(null_fd);
 		wait(&status);
-		/* fix buffering issues */
-		sync();
 		/* convert 255 to -1 since WEXITSTATUS() only returns the low-order 8 bits */
 		if (WIFEXITED(status) && WEXITSTATUS(status)) {
 			/* WARNX("executable returned non-zero exit code"); */

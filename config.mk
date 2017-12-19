@@ -27,7 +27,7 @@ TSRC := $(wildcard t/*.c)
 HDR := $(wildcard src/*.h) $(wildcard t/*.h)
 DEBUG := -D_DEBUG -p -pg -Og -ggdb3 -no-pie -fno-inline -Wfloat-equal -Wrestrict -Wshadow
 CPPFLAGS := -D_FORTIFY_SOURCE=2 -D_GNU_SOURCE -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=700 -MMD -MP
-LIBS := -lelf -lhistory -lreadline
+LIBS := -lelf -lhistory -lreadline -pthread
 TARGET := cepl
 MANPAGE := cepl.1
 TAP := t/tap
