@@ -126,11 +126,9 @@ static inline void sig_handler(int sig)
 	pthread_mutex_unlock(&output_mtx);
 	/* abort current input line */
 	if (sig == SIGINT) {
-		rl_cleanup_after_signal();
 		rl_clear_visible_line();
 		rl_reset_line_state();
 		rl_free_line_state();
-		rl_reset_after_signal();
 		putchar('\n');
 		if (exec_flag) {
 			undo_last_line();
