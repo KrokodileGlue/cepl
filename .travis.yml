@@ -58,6 +58,7 @@ before_install:
                 "" \
                 "#endif /* _LINUX_MEMFD_H */" \
                 | sudo tee /usr/include/linux/memfd.h
+    - ulimit -s unlimited
 
 script:
     - make -B

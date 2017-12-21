@@ -35,10 +35,10 @@ BINDIR := bin
 MANDIR := share/man/man1
 MKALL += Makefile debug.mk
 DEBUG += -fno-builtin -fno-common -fprofile-generate=./p -fsanitize=address,alignment,leak,undefined -fverbose-asm
-CFLAGS += -fno-builtin -fno-common -fno-inline -fPIC -fuse-ld=gold -flto -fuse-linker-plugin
+CFLAGS += -fPIC -fuse-ld=gold -flto -fuse-linker-plugin
 CFLAGS += -pedantic-errors -std=c11 -Wall -Wextra -Wno-missing-field-initializers -Wstrict-overflow
 CFLAGS += -fno-align-functions -fno-align-jumps -fno-align-labels -fno-align-loops -fno-strict-aliasing
-LDFLAGS += -fno-builtin -fno-common -fno-inline -fPIC -fuse-ld=gold -flto -fuse-linker-plugin
+LDFLAGS += -fPIC -fuse-ld=gold -flto -fuse-linker-plugin
 LDFLAGS += -Wl,-O2,-z,relro,-z,now,--sort-common,--as-needed
 LDFLAGS += -fno-align-functions -fno-align-jumps -fno-align-labels -fno-align-loops -fno-strict-aliasing
 
