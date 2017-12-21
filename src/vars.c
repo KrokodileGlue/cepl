@@ -6,7 +6,6 @@
  */
 
 #include "vars.h"
-#include <regex.h>
 
 /* fallback linker arg array */
 static char *const ld_alt_list[] = {

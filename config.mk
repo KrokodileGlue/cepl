@@ -8,7 +8,7 @@
 DESTDIR ?=
 PREFIX ?= /usr/local
 CC ?= gcc
-OLVL ?= -O2
+OLVL ?= -O3
 CFLAGS ?= -pipe -fstack-protector-strong
 LDFLAGS ?= -pipe -fstack-protector-strong
 
