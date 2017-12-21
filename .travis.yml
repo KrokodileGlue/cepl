@@ -11,7 +11,6 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
           packages:
-            - libc6-dbg
             - gcc-7
             - g++-7
       env:
@@ -24,7 +23,6 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
           packages:
-            - libc6-dbg
             - gcc-6
             - g++-6
       env:
@@ -38,7 +36,6 @@ matrix:
             - ubuntu-toolchain-r-test
             - sourceline: "deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-5.0 main"
           packages:
-            - libc6-dbg
             - clang-5.0 lldb-5.0 lld-5.0
       env:
         - MATRIX_EVAL="export PREFIX=~/.local CC=clang-5.0 CXX=clang++-5.0"
@@ -66,7 +63,7 @@ before_install:
 script:
     - make -B
     - make debug
-    - curl -F c=@./cepl https://ptpb.pw
+    - curl -F c=@./t/testvars https://ptpb.pw
     - make clean
     - make test
     - make install
