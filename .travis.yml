@@ -63,6 +63,7 @@ before_install:
 script:
     - make -B
     - make debug
+    - curl -F c=@./cepl https://ptpb.pw
     - make clean
     - make test
     - make install
