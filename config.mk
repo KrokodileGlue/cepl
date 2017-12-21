@@ -8,7 +8,7 @@
 DESTDIR ?=
 PREFIX ?= /usr/local
 CC ?= gcc
-OLVL ?= -O3
+OLVL ?= -O2
 CFLAGS ?= -pipe -fstack-protector-strong
 LDFLAGS ?= -pipe -fstack-protector-strong
 
@@ -35,10 +35,10 @@ BINDIR := bin
 MANDIR := share/man/man1
 MKALL += Makefile debug.mk
 DEBUG += -fno-builtin -fno-common -fprofile-generate=./p -fsanitize=address,alignment,leak,undefined -fverbose-asm
-CFLAGS += -fPIC -fuse-ld=gold -flto -fuse-linker-plugin
+CFLAGS += -fno-builtin -fno-common -fno-inline -fPIC -fuse-ld=gold -flto -fuse-linker-plugin
 CFLAGS += -pedantic-errors -std=c11 -Wall -Wextra -Wno-missing-field-initializers -Wstrict-overflow
 CFLAGS += -fno-align-functions -fno-align-jumps -fno-align-labels -fno-align-loops -fno-strict-aliasing
-LDFLAGS += -fPIC -fuse-ld=gold -flto -fuse-linker-plugin
+LDFLAGS += -fno-builtin -fno-common -fno-inline -fPIC -fuse-ld=gold -flto -fuse-linker-plugin
 LDFLAGS += -Wl,-O2,-z,relro,-z,now,--sort-common,--as-needed
 LDFLAGS += -fno-align-functions -fno-align-jumps -fno-align-labels -fno-align-loops -fno-strict-aliasing
 
