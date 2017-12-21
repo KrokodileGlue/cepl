@@ -6,6 +6,7 @@
  */
 
 #include "vars.h"
+#include <regex.h>
 
 /* fallback linker arg array */
 static char *const ld_alt_list[] = {
@@ -216,7 +217,7 @@ size_t extract_id(char const *restrict ln, char **restrict id, size_t *restrict 
 			regfree(&reg);
 			/* first/second/fourth capture is ignored */
 			char const final_regex[] =
-				"(^[^,;]*\\{[^}]*\\}[^,;]*|[^,(){};|]+)"
+				"(^[^,]+\\{[^}]*\\}[^,]*|[^,(){};|]+)"
 				"(|struct[^=]+|struct|union[^=]+|union|"
 				"_?[Bb]ool|[rs]?size_t|u?int[0-9]+_t|"
 				"ptrdiff_t|intptr_t|intmax_t|uintmax_t|"
