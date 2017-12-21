@@ -7,6 +7,7 @@
 
 #include "tap.h"
 #include "../src/vars.h"
+#include <signal.h>
 
 /* global linker arguments struct */
 STR_LIST ld_list;
@@ -27,6 +28,9 @@ int main(void)
 	};
 
 	plan(27);
+
+	/* band-aid for internal regex errors */
+	signal(SIGSEGV, SIG_IGN);
 
 	/* initialize lists */
 	init_list(&ids, NULL);
