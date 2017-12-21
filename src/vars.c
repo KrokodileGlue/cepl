@@ -180,7 +180,7 @@ enum var_type extract_type(char const *restrict ln, char const *restrict id)
 size_t extract_id(char const *restrict ln, char **restrict id, size_t *restrict off)
 {
 	regex_t reg;
-	regmatch_t matches[4];
+	regmatch_t matches[5];
 	/* second capture is ignored */
 	char const initial_regex[] =
 		"^[^,(){};&|=]+[^,({;&|=[:alnum:]_]+"
