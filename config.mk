@@ -39,7 +39,7 @@ CFLAGS += -fPIC -fuse-ld=gold -flto -fuse-linker-plugin
 CFLAGS += -pedantic-errors -std=c11 -Wall -Wextra -Wno-missing-field-initializers -Wstrict-overflow
 CFLAGS += -fno-align-functions -fno-align-jumps -fno-align-labels -fno-align-loops -fno-strict-aliasing
 LDFLAGS += -fPIC -fuse-ld=gold -flto -fuse-linker-plugin
-LDFLAGS += -Wl,-z,--stack,16384,-O2,-z,relro,-z,now,--sort-common,--as-needed
+LDFLAGS += -Wl,-O2,-z,relro,-z,now,--sort-common,--as-needed
 LDFLAGS += -fno-align-functions -fno-align-jumps -fno-align-labels -fno-align-loops -fno-strict-aliasing
 
 # vi:ft=make:
