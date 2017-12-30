@@ -8,6 +8,11 @@
 #ifndef COMPILE_H
 #define COMPILE_H 1
 
+/* silence linter */
+#ifndef _GNU_SOURCE
+#	define _GNU_SOURCE
+#endif
+
 #include "defs.h"
 #include "errs.h"
 #include <fcntl.h>
@@ -29,9 +34,10 @@ static inline void pipe_fd(int in_fd, int out_fd)
 	/* pipe data in a loop */
 	for (;;) {
 		ptrdiff_t buf_len;
-		if ((buf_len = sendfile(out_fd, in_fd, NULL, PAGE_SIZE)) == -1) {
+		if ((buf_len = splice(in_fd, NULL, out_fd, NULL, PAGE_SIZE, SPLICE_F_MOVE)) == -1) {
 			if (errno == EINTR || errno == EAGAIN)
 				continue;
+			printf("%d\n", errno);
 			WARN("error reading from input fd");
 			break;
 		}
