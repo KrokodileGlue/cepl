@@ -11,6 +11,7 @@
 #include "defs.h"
 #include "errs.h"
 #include <fcntl.h>
+#include <sys/sendfile.h>
 
 /* prototypes */
 int compile(char const *restrict src, char *const cc_args[], char *const exec_args[]);
@@ -28,8 +29,7 @@ static inline void pipe_fd(int in_fd, int out_fd)
 	/* pipe data in a loop */
 	for (;;) {
 		ptrdiff_t buf_len;
-		char buf[PAGE_SIZE];
-		if ((buf_len = read(in_fd, buf, PAGE_SIZE)) == -1) {
+		if ((buf_len = sendfile(out_fd, in_fd, NULL, PAGE_SIZE)) == -1) {
 			if (errno == EINTR || errno == EAGAIN)
 				continue;
 			WARN("error reading from input fd");
@@ -38,12 +38,6 @@ static inline void pipe_fd(int in_fd, int out_fd)
 		/* break on EOF */
 		if (buf_len == 0)
 			break;
-		if (write(out_fd, buf, buf_len) == -1) {
-			if (errno == EINTR || errno == EAGAIN)
-				continue;
-			WARN("error writing to output fd");
-			break;
-		}
 	}
 }
 
